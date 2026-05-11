@@ -735,20 +735,33 @@ for (const i of order){
     if (document.fonts?.ready) document.fonts.ready.then(layout);
 
     /* --------- render catalog from localStorage --------- */
-    const items = (() => {
-      try { return JSON.parse(localStorage.getItem('catalogItems') || '[]'); }
-      catch { return []; }
-    })();
+    const KEY = 'catalogItems';
 
-    if (items.length){
+    function readCatalogItems(){
+      try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+      catch { return []; }
+    }
+
+    function renderCatalog(){
+      host.innerHTML = '';
+      const items = readCatalogItems();
+      if (!items.length){
+        host.style.height = '0px';
+        return;
+      }
+
       const df = document.createDocumentFragment();
       items.forEach(item => df.appendChild(buildCard(item)));
       host.appendChild(df);
-      // небольшой кадр, чтобы DOM дорисовался
       requestAnimationFrame(()=>{ watchItems(); layout(); });
-      // на всякий случай пересчитать ещё через тик
       setTimeout(layout, 200);
     }
+
+    renderCatalog();
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === KEY) renderCatalog();
+    });
   </script>
 </body>
 </html>

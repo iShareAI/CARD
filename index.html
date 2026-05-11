@@ -1911,6 +1911,12 @@ function titleToSlug(title){
   return latin.replace(/[^a-z0-9]+/g,'').slice(0,80) || 'project';
 }
 
+const CATALOG_TAB_NAME = 'cardCatalogTab';
+function openOrFocusCatalog(){
+  const w = window.open('catalog.html', CATALOG_TAB_NAME);
+  if (w && typeof w.focus === 'function') w.focus();
+}
+
 // ↓↓↓ замените существующий обработчик (или добавьте, если его нет)
 
 document.getElementById('launch').addEventListener('click', async () => {
@@ -1937,14 +1943,14 @@ document.getElementById('launch').addEventListener('click', async () => {
     const arr = JSON.parse(localStorage.getItem(KEY) || '[]');
     arr.unshift(item);
     localStorage.setItem(KEY, JSON.stringify(arr));
-    window.open('catalog.html', '_blank', 'noopener');
+    openOrFocusCatalog();
    } catch (err) {
     try {
       item.panoList = [];
       const arr = JSON.parse(localStorage.getItem(KEY) || '[]');
       arr.unshift(item);
       localStorage.setItem(KEY, JSON.stringify(arr));
-      window.open('catalog.html', '_blank', 'noopener');
+      openOrFocusCatalog();
      } catch {
       alert('Не удалось добавить в каталог (возможно, переполнен localStorage).');
     }
